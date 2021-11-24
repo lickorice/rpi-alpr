@@ -28,18 +28,20 @@ class Pipeline:
 
         fctr = 0 # Frame counter
         fctrabs = 0 # Absolute frame counter
+        # Per frame calculation
+
+        every_x_frame = VIDEO_FPS // frames_per_second
         while cap.isOpened():
             ret, frame = cap.read()
             fctr += 1 # Increment frame
             fctrabs += 1
-            print("[{:06d}] Processing frames...".format(fctrabs), end="\r")
             if not ret:
                 print("End of video detected! Capture execution terminating...")
                 break # Frame reading error
             
-            # Per frame calculation
-            every_x_frame = VIDEO_FPS // frames_per_second
             if fctr >= every_x_frame:
+                # Progress bar
+                print("[{:06d}][{}fps] Processing frames...".format(fctrabs, frames_per_second), end="\r")
                 # Reset frame counter
                 fctr = 0
 
@@ -90,7 +92,7 @@ class Pipeline:
                                     self.plates[license_plate] = [conf_in_100]
 
                                 # Save image
-                                # cv2.imwrite('./frame_data/{}-{}.jpg'.format(text[0][1].upper(),conf_in_100),save_frame)
+                                cv2.imwrite('./frame_data/{}-{}.jpg'.format(text[0][1].upper(),fctrabs),save_frame)
 
         # Release capture
         cap.release()
